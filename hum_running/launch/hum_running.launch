@@ -1,0 +1,3 @@
+<launch>
+ <node name="hum_running" pkg="hum_running" type="hum_running.py" respawn="false" output="screen" />
+</launch> 
