@@ -483,6 +483,8 @@ class Px4Controller:
             if not self.arm_state and first_arm:
                 self.log.logger.info("请解锁")
                 first_arm  = False
+    
+
     def wait_gps(self,wait_time,rcmsg):
         for i in range(50):
             rcmsg.channels[2] = 1300
@@ -676,19 +678,26 @@ class Px4Controller:
             return  avg_angle
         else:
             return last_value
-    def get_go_to_init_waypoint(self,wayline,current_gps,yaw):  
+    
+
+    def get_nearby_waypoint(self,wayline,gps):  
         '''
-        获取要去的初始航点
+        获取某一位置附近的航点
+
+        wayline : 航线 eg:[(lat,lon),...]
+        gps ：位置坐标  eg:(lat,lon)
         '''
         waypoint_dist_list = []
         for waypoint_item in wayline:
-            dist = gps_utiles.gps_get_distance(current_gps,waypoint_item)
+            dist = gps_utiles.gps_get_distance(gps,waypoint_item)
             waypoint_dist_list.append(dist)
+        
+        min_dist = min(waypoint_dist_list)
+        waypoint_index = waypoint_dist_list.index(min_dist)
+        return waypoint_index , wayline[waypoint_index]
+
 
                         
-
-
-
     def set_dist_pid_control(self, except_dist, now_dist, parallel_yaw, rcmsg ,current_heading ,course_range,hum_msg):
         '''
         根据期望离岸距离 不断调整yaw 到达期望距离
